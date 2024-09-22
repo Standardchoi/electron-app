@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow,ipcMain } = require('electron');
 const path = require('node:path');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
@@ -12,6 +12,8 @@ const createWindow = () => {
     width: 800,
     height: 600,
     webPreferences: {
+      contextIsolation: true, // 보안 설정
+      enableRemoteModule: false,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
@@ -49,3 +51,16 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+
+
+// IPC 메인 프로세스 설정
+ipcMain.on('input-data', (event, data) => {
+  console.log('Received from renderer:', data);
+  // 데이터 처리 후, 결과를 렌더러로 전송
+  event.reply('processed-data', `Processed: ${data}`);
+});
+
+
+
+
+
